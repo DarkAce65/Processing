@@ -1,6 +1,6 @@
-int w = 400;
-int h = 200;
-Node[][] lines = new Node[3][w / 4];
+int w = 750;
+int h = 500;
+Node[][] lines = new Node[10][w / 4];
 
 void setup() {
 	stroke(255);
@@ -37,7 +37,7 @@ class Node {
 	void update() {
 		if(mousePressed) {
 			PVector diff = new PVector(mouseX - location.x, mouseY - location.y);
-			diff.mult(4 / diff.mag());
+			diff.mult(10 / diff.mag());
 			this.location.sub(diff);
 		}
 		location.lerp(desiredLocation, strength);
