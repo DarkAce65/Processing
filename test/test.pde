@@ -1,24 +1,23 @@
 int w = 400;
 int h = 200;
-Node[] line1 = new Node[w / 4];
+Node[][] lines = new Node[1][w / 4];
 
 void setup() {
 	stroke(255);
 	surface.setSize(w, h);
-	for(int i = 0; i < line1.length; i++) {
-		line1[i] = new Node(i * w / line1.length, height / 2, 0.1);
+	for(int i = 0; i < lines[0].length; i++) {
+		lines[0][i] = new Node(i * w / lines[0].length, height / 2, 0.1);
 	}
 }
 
 void draw() {
 	background(30);
-	for(int i = 0; i < line1.length; i++) {
-		line1[i].update();
+	for(int i = 0; i < lines[0].length; i++) {
+		lines[0][i].update();
 	}
-	for(int i = 0; i < line1.length - 1; i++) {
-		line(line1[i].location.x, line1[i].location.y, line1[i + 1].location.x, line1[i + 1].location.y);
+	for(int i = 0; i < lines[0].length - 1; i++) {
+		line(lines[0][i].location.x, lines[0][i].location.y, lines[0][i + 1].location.x, lines[0][i + 1].location.y);
 	}
-	line(line1[line1.length - 1].location.x, line1[line1.length - 1].location.y, width, line1[line1.length - 1].desiredLocation.y);
 }
 
 class Node {
