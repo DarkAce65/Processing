@@ -12,10 +12,9 @@ void setup() {
 
 void draw() {
 	background(30);
-	for(int i = 0; i < lines[0].length; i++) {
-		lines[0][i].update();
-	}
+	lines[0][0].update();
 	for(int i = 0; i < lines[0].length - 1; i++) {
+		lines[0][i + 1].update();
 		line(lines[0][i].location.x, lines[0][i].location.y, lines[0][i + 1].location.x, lines[0][i + 1].location.y);
 	}
 }
