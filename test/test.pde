@@ -3,19 +3,21 @@ int h = 200;
 Node[] line1 = new Node[w / 4];
 
 void setup() {
+	stroke(255);
 	surface.setSize(w, h);
 	for(int i = 0; i < line1.length; i++) {
-		line1[i] = new Node(i * w / line1.length, height / 2, 0.05);
+		line1[i] = new Node(i * w / line1.length, height / 2, 0.1);
 	}
 }
 
 void draw() {
-	background(255);
-	for(int i = 0; i < line1.length - 1; i++) {
+	background(30);
+	for(int i = 0; i < line1.length; i++) {
 		line1[i].update();
+	}
+	for(int i = 0; i < line1.length - 1; i++) {
 		line(line1[i].location.x, line1[i].location.y, line1[i + 1].location.x, line1[i + 1].location.y);
 	}
-	line1[line1.length - 1].update();
 	line(line1[line1.length - 1].location.x, line1[line1.length - 1].location.y, width, line1[line1.length - 1].desiredLocation.y);
 }
 
@@ -33,11 +35,9 @@ class Node {
 	void update() {
 		if(mousePressed) {
 			PVector diff = new PVector(mouseX - location.x, mouseY - location.y);
-			diff.mult(1 / diff.mag());
+			diff.mult(10 / diff.mag());
 			this.location.sub(diff);
 		}
-		else {
-			location.lerp(desiredLocation, strength);
-		}
+		location.lerp(desiredLocation, strength);
 	}
 }
