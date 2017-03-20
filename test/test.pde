@@ -37,7 +37,7 @@ class Node {
 	void update() {
 		if(mousePressed) {
 			PVector diff = new PVector(mouseX - location.x, mouseY - location.y);
-			diff.mult(10 / diff.mag());
+			diff.mult(random(10) / diff.mag());
 			this.location.sub(diff);
 		}
 		location.lerp(desiredLocation, strength);
