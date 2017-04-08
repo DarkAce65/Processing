@@ -4,6 +4,7 @@ float lightRadius = 0;
 
 PVector mouseShift = new PVector();
 
+final int maxSensorRadius = s * 3 / 8;
 PVector[] sVectors = new PVector[5];
 PVector direction = new PVector();
 
@@ -19,12 +20,7 @@ void drawSensors() {
 void calculateSensorValues() {
 	direction.setMag(0);
 	for(int i = 0; i < sVectors.length; i++) {
-		float diff = PVector.angleBetween(mouseShift, sVectors[i]);
-		float multiplier = 0;
-		if(diff < PI) {
-			multiplier = 1 - diff / PI;
-		}
-		float m = max(0.001, min(s * 3 / 8, mouseShift.mag() * multiplier));
+		float m = max(0.001, cos(PVector.angleBetween(mouseShift, sVectors[i])) * maxSensorRadius);
 		sVectors[i].setMag(lerp(sVectors[i].mag(), m, 0.1));
 		direction.add(sVectors[i]);
 	}
@@ -48,7 +44,7 @@ void draw() {
 	mouseShift.y = mouseY - s / 2;
 	translate(s / 2, s / 2);
 	ellipse(0, 0, s / 5, s / 5);
-	ellipse(0, 0, s * 3 / 4, s * 3 / 4);
+	ellipse(0, 0, maxSensorRadius * 2, maxSensorRadius * 2);
 
 	if(mousePressed) {
 		stroke(255, 255 * (1 - lightRadius));
