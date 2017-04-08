@@ -1,21 +1,28 @@
 final int s = 500;
 boolean lActive = false;
-int lightRadius = s / 10;
+int lightRadius = s / 16;
 
 PVector mouseShift = new PVector();
 
 final int maxSensorRadius = s * 3 / 8;
+float[] sAngles = {PI / -4, PI / 4, PI, PI / 2, PI / -2};
 PVector[] sVectors = new PVector[5];
+PVector[] sLocations = new PVector[5];
 PVector direction = new PVector();
 
-final int thresholdRadius = s / 6;
+final int thresholdRadius = s / 8;
 
 void drawVectors() {
-	stroke(0, 0, 255);
+	stroke(255);
 	for(int i = 0; i < sVectors.length; i++) {
 		line(0, 0, sVectors[i].x, sVectors[i].y);
 	}
-	stroke(255);
+	noStroke();
+	fill(255);
+	for(int i = 0; i < sVectors.length; i++) {
+		ellipse(sLocations[i].x, sLocations[i].y, 4, 4);
+	}
+	stroke(0, 255, 0);
 	if(direction.mag() < thresholdRadius) {
 		stroke(255, 0, 0);
 	}
@@ -27,7 +34,10 @@ void calculateSensorValues() {
 	float dist = max(0, min(1, (maxSensorRadius - mouseShift.mag()) / maxSensorRadius));
 	for(int i = 0; i < sVectors.length; i++) {
 		float angle = cos(PVector.angleBetween(mouseShift, sVectors[i]));
-		float mag = max(0.001, angle * dist * maxSensorRadius);
+		float mag = maxSensorRadius;
+		if(sLocations[i].dist(mouseShift) > lightRadius) {
+			mag = max(0.001, min(1, angle * dist) * maxSensorRadius);
+		}
 
 		sVectors[i].setMag(lerp(sVectors[i].mag(), mag, 0.1));
 		direction.add(sVectors[i]);
@@ -39,8 +49,8 @@ void setup() {
 	strokeWeight(2);
 
 	for(int i = 0; i < sVectors.length; i++) {
-		float[] d = {PI / -4, PI / 4, PI, PI / 2, PI / -2};
-		sVectors[i] = PVector.fromAngle(d[i] - PI / 2);
+		sVectors[i] = PVector.fromAngle(sAngles[i] - PI / 2);
+		sLocations[i] = sVectors[i].copy().setMag(s / 24);
 	}
 }
 
@@ -64,7 +74,7 @@ void draw() {
 
 	if(lActive) {
 		fill(255, 64);
-		ellipse(mouseShift.x, mouseShift.y, lightRadius, lightRadius);
+		ellipse(mouseShift.x, mouseShift.y, lightRadius * 2, lightRadius * 2);
 
 		calculateSensorValues();
 	}
