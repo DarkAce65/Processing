@@ -9,18 +9,18 @@ final int maxSensorRadius = s * 3 / 8;
 PVector[] sVectors = new PVector[5];
 PVector direction = new PVector();
 
-final int thresholdRadius = s / 12;
+final int thresholdRadius = s / 6;
 
-void drawSensors() {
+void drawVectors() {
 	stroke(0, 0, 255);
 	for(int i = 0; i < sVectors.length; i++) {
 		line(0, 0, sVectors[i].x, sVectors[i].y);
 	}
-	stroke(0, 255, 0);
+	stroke(255);
+	if(direction.mag() < thresholdRadius) {
+		stroke(255, 0, 0);
+	}
 	line(0, 0, direction.x, direction.y);
-	noStroke();
-	fill(255);
-	ellipse(0, 0, 4, 4);
 }
 
 void calculateSensorValues() {
@@ -55,7 +55,7 @@ void keyTyped() {
 
 void draw() {
 	background(0);
-	stroke(255, 0, 0);
+	stroke(255, 128);
 	noFill();
 	pushMatrix();
 	mouseShift.x = mouseX - s / 2;
@@ -69,8 +69,18 @@ void draw() {
 		ellipse(mouseShift.x, mouseShift.y, lRadius * lc, lRadius * lc);
 		lc += 0.02;
 		lc %= 1;
+
+		calculateSensorValues();
 	}
-	calculateSensorValues();
-	drawSensors();
+	else {
+		direction.setMag(lerp(direction.mag(), 0.001, 0.1));
+		for(int i = 0; i < sVectors.length; i++) {
+			sVectors[i].setMag(lerp(sVectors[i].mag(), 0.001, 0.1));
+		}
+	}
+	drawVectors();
+	noStroke();
+	fill(255);
+	ellipse(0, 0, 4, 4);
 	popMatrix();
 }
