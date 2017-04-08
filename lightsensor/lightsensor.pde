@@ -5,7 +5,7 @@ int lightRadius = s / 16;
 PVector mouseShift = new PVector();
 
 final int maxSensorRadius = s * 3 / 8;
-float[] sAngles = {PI / -4, PI / 4, PI, PI / 2, PI / -2};
+float[] sAngles = {PI / -6, PI / 6, PI, PI / 2, PI / -2};
 PVector[] sVectors = new PVector[5];
 PVector[] sLocations = new PVector[5];
 PVector direction = new PVector();
@@ -40,7 +40,12 @@ void calculateSensorValues() {
 		}
 
 		sVectors[i].setMag(lerp(sVectors[i].mag(), mag, 0.1));
-		direction.add(sVectors[i]);
+		if(i < 2) {
+			direction.add(sVectors[i].copy().mult(sqrt(3) / 3));
+		}
+		else {
+			direction.add(sVectors[i]);
+		}
 	}
 }
 
