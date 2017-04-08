@@ -8,7 +8,7 @@ final int maxSensorRadius = s * 3 / 8;
 PVector[] sVectors = new PVector[5];
 PVector direction = new PVector();
 
-final int thresholdRadius = s / 10;
+final int thresholdRadius = s / 12;
 
 void drawSensors() {
 	stroke(0, 0, 255);
@@ -17,12 +17,15 @@ void drawSensors() {
 	}
 	stroke(0, 255, 0);
 	line(0, 0, direction.x, direction.y);
+	noStroke();
+	fill(255);
+	ellipse(0, 0, 4, 4);
 }
 
 void calculateSensorValues() {
 	direction.setMag(0);
+	float dist = max(0, min(1, (maxSensorRadius - mouseShift.mag()) / maxSensorRadius));
 	for(int i = 0; i < sVectors.length; i++) {
-		float dist = max(0, min(1, (maxSensorRadius - mouseShift.mag()) / maxSensorRadius));
 		float angle = cos(PVector.angleBetween(mouseShift, sVectors[i]));
 		float mag = max(0.001, angle * dist * maxSensorRadius);
 
