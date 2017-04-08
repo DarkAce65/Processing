@@ -1,37 +1,47 @@
 final int s = 500;
+final float sensorThreshold = s / 12;
+final float sensitivity = s / 18;
+final int lightThreshold = s / 8;
 boolean lActive = false;
 int lightRadius = s / 16;
 
-PVector mouseShift = new PVector();
-
 final int maxSensorRadius = s * 3 / 8;
-float[] sAngles = {PI / -6, PI / 6, PI, PI / 2, PI / -2};
+float[] sAngles = {PI / -6, PI / 6, PI, HALF_PI, -HALF_PI};
 PVector[] sVectors = new PVector[5];
 PVector[] sLocations = new PVector[5];
 PVector direction = new PVector();
 
-final int thresholdRadius = s / 8;
+PVector mPower = new PVector();
+
+PVector mouseShift = new PVector();
 
 void drawVectors() {
 	stroke(255);
 	for(int i = 0; i < sVectors.length; i++) {
 		line(0, 0, sVectors[i].x, sVectors[i].y);
 	}
+
 	noStroke();
 	fill(255);
-	for(int i = 0; i < sVectors.length; i++) {
+	for(int i = 0; i < sLocations.length; i++) {
 		ellipse(sLocations[i].x, sLocations[i].y, 4, 4);
 	}
+
 	stroke(0, 255, 0);
-	if(direction.mag() < thresholdRadius) {
+	if(direction.mag() < lightThreshold) {
 		stroke(255, 0, 0);
 	}
 	line(0, 0, direction.x, direction.y);
+
+	stroke(0, 0, 255);
+	strokeWeight(6);
+	line(s / -12, 0, s / -12, mPower.x);
+	line(s / 12, 0, s / 12, mPower.y);
 }
 
 void calculateSensorValues() {
 	direction.setMag(0);
-	float dist = max(0, min(1, (maxSensorRadius - mouseShift.mag()) / maxSensorRadius));
+	float dist = constrain((maxSensorRadius - mouseShift.mag()) / maxSensorRadius, 0, 1);
 	for(int i = 0; i < sVectors.length; i++) {
 		float angle = cos(PVector.angleBetween(mouseShift, sVectors[i]));
 		float mag = maxSensorRadius;
@@ -49,12 +59,35 @@ void calculateSensorValues() {
 	}
 }
 
+void calculateMotorPower() {
+	float d = direction.mag();
+	float h = (direction.heading() + PI * 5 / 2) % TAU;
+	float l = 1;
+	float r = 1;
+	if(d < lightThreshold && sVectors[0].mag() > sensorThreshold) {
+		l = 0;
+		r = 0;
+	}
+	else if(d > sensitivity) {
+		if(h > PI) {
+			h = TAU - h;
+			l -= h / HALF_PI;
+		}
+		else {
+			r -= h / HALF_PI;
+		}
+	}
+
+	mPower.x = lerp(mPower.x, l * -30, 0.1);
+	mPower.y = lerp(mPower.y, r * -30, 0.1);
+}
+
 void setup() {
 	surface.setSize(s, s);
-	strokeWeight(2);
+	strokeCap(SQUARE);
 
 	for(int i = 0; i < sVectors.length; i++) {
-		sVectors[i] = PVector.fromAngle(sAngles[i] - PI / 2);
+		sVectors[i] = PVector.fromAngle(sAngles[i] - HALF_PI);
 		sLocations[i] = sVectors[i].copy().setMag(s / 24);
 	}
 }
@@ -67,6 +100,7 @@ void keyTyped() {
 }
 
 void draw() {
+	strokeWeight(2);
 	background(0);
 	stroke(255, 128);
 	noFill();
@@ -74,7 +108,7 @@ void draw() {
 	mouseShift.x = mouseX - s / 2;
 	mouseShift.y = mouseY - s / 2;
 	translate(s / 2, s / 2);
-	ellipse(0, 0, thresholdRadius * 2, thresholdRadius * 2);
+	ellipse(0, 0, lightThreshold * 2, lightThreshold * 2);
 	ellipse(0, 0, maxSensorRadius * 2, maxSensorRadius * 2);
 
 	if(lActive) {
@@ -82,12 +116,14 @@ void draw() {
 		ellipse(mouseShift.x, mouseShift.y, lightRadius * 2, lightRadius * 2);
 
 		calculateSensorValues();
+		calculateMotorPower();
 	}
 	else {
 		direction.setMag(lerp(direction.mag(), 0, 0.1));
 		for(int i = 0; i < sVectors.length; i++) {
 			sVectors[i].setMag(lerp(sVectors[i].mag(), 0.001, 0.1));
 		}
+		mPower.setMag(lerp(mPower.mag(), 0, 0.1));
 	}
 	drawVectors();
 	noStroke();
