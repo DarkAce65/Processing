@@ -5,26 +5,30 @@ final int lightThreshold = s / 8;
 boolean lActive = false;
 int lightRadius = s / 16;
 
+boolean showSensors = true;
 final int maxSensorRadius = s * 3 / 8;
 float[] sAngles = {PI / -6, PI / 6, PI, HALF_PI, -HALF_PI};
 PVector[] sVectors = new PVector[5];
 PVector[] sLocations = new PVector[5];
 PVector direction = new PVector();
 
+boolean showMotors = false;
 PVector mPower = new PVector();
 
 PVector mouseShift = new PVector();
 
 void drawVectors() {
-	stroke(255);
-	for(int i = 0; i < sVectors.length; i++) {
-		line(0, 0, sVectors[i].x, sVectors[i].y);
-	}
+	if(showSensors) {
+		stroke(255);
+		for(int i = 0; i < sVectors.length; i++) {
+			line(0, 0, sVectors[i].x, sVectors[i].y);
+		}
 
-	noStroke();
-	fill(255);
-	for(int i = 0; i < sLocations.length; i++) {
-		ellipse(sLocations[i].x, sLocations[i].y, 4, 4);
+		noStroke();
+		fill(255);
+		for(int i = 0; i < sLocations.length; i++) {
+			ellipse(sLocations[i].x, sLocations[i].y, 4, 4);
+		}
 	}
 
 	stroke(0, 255, 0);
@@ -33,10 +37,12 @@ void drawVectors() {
 	}
 	line(0, 0, direction.x, direction.y);
 
-	stroke(0, 0, 255);
-	strokeWeight(6);
-	line(s / -12, 0, s / -12, mPower.x);
-	line(s / 12, 0, s / 12, mPower.y);
+	if(showMotors) {
+		stroke(0, 0, 255);
+		strokeWeight(6);
+		line(s / -12, 0, s / -12, mPower.x);
+		line(s / 12, 0, s / 12, mPower.y);
+	}
 }
 
 void calculateSensorValues() {
@@ -94,8 +100,14 @@ void setup() {
 
 void keyTyped() {
 	int k = int(key);
-	if(k == 32) {
+	if(k == ' ') {
 		lActive = !lActive;
+	}
+	else if(k == '1') {
+		showSensors = !showSensors;
+	}
+	else if(k == '2') {
+		showMotors = !showMotors;
 	}
 }
 
