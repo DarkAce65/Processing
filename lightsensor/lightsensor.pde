@@ -1,7 +1,6 @@
 final int s = 500;
 boolean lActive = false;
-final int lRadius = s / 10;
-float lc = 0;
+int lightRadius = s / 10;
 
 PVector mouseShift = new PVector();
 
@@ -49,7 +48,6 @@ void keyTyped() {
 	int k = int(key);
 	if(k == 32) {
 		lActive = !lActive;
-		lc = 0;
 	}
 }
 
@@ -65,15 +63,13 @@ void draw() {
 	ellipse(0, 0, maxSensorRadius * 2, maxSensorRadius * 2);
 
 	if(lActive) {
-		stroke(255, 255 * (1 - lc));
-		ellipse(mouseShift.x, mouseShift.y, lRadius * lc, lRadius * lc);
-		lc += 0.02;
-		lc %= 1;
+		fill(255, 64);
+		ellipse(mouseShift.x, mouseShift.y, lightRadius, lightRadius);
 
 		calculateSensorValues();
 	}
 	else {
-		direction.setMag(lerp(direction.mag(), 0.001, 0.1));
+		direction.setMag(lerp(direction.mag(), 0, 0.1));
 		for(int i = 0; i < sVectors.length; i++) {
 			sVectors[i].setMag(lerp(sVectors[i].mag(), 0.001, 0.1));
 		}
