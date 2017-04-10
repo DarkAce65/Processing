@@ -1,6 +1,6 @@
 final int s = 500;
-final float sensorThreshold = s / 12;
-final float sensitivity = s / 18;
+final float sensorThreshold = s / 4;
+final float sensitivity = s / 8;
 final int lightThreshold = s / 8;
 boolean lActive = false;
 int lightRadius = s / 16;
