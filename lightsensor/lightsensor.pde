@@ -103,10 +103,10 @@ void keyTyped() {
 	if(k == ' ') {
 		lActive = !lActive;
 	}
-	else if(k == '1') {
+	else if(k == 's') {
 		showSensors = !showSensors;
 	}
-	else if(k == '2') {
+	else if(k == 'm') {
 		showMotors = !showMotors;
 	}
 }
