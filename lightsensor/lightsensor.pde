@@ -18,6 +18,7 @@ PVector mPower = new PVector();
 PVector mouseShift = new PVector();
 
 void drawVectors() {
+	fill(128);
 	if(showSensors) {
 		stroke(255);
 		for(int i = 0; i < sVectors.length; i++) {
@@ -29,7 +30,9 @@ void drawVectors() {
 		for(int i = 0; i < sLocations.length; i++) {
 			ellipse(sLocations[i].x, sLocations[i].y, 4, 4);
 		}
+		fill(255);
 	}
+	text("s: Show sensors", s / 2 - 20, s / 2 - 40);
 
 	stroke(0, 255, 0);
 	if(direction.mag() < lightThreshold) {
@@ -37,12 +40,15 @@ void drawVectors() {
 	}
 	line(0, 0, direction.x, direction.y);
 
+	fill(128);
 	if(showMotors) {
-		stroke(0, 0, 255);
+		stroke(64, 128, 255);
 		strokeWeight(6);
 		line(s / -12, 0, s / -12, mPower.x);
 		line(s / 12, 0, s / 12, mPower.y);
+		fill(255);
 	}
+	text("m: Show motors", s / 2 - 20, s / 2 - 20);
 }
 
 void calculateSensorValues() {
@@ -91,6 +97,7 @@ void calculateMotorPower() {
 void setup() {
 	surface.setSize(s, s);
 	strokeCap(SQUARE);
+	textAlign(RIGHT);
 
 	for(int i = 0; i < sVectors.length; i++) {
 		sVectors[i] = PVector.fromAngle(sAngles[i] - HALF_PI);
