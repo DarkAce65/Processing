@@ -56,7 +56,7 @@ void draw() {
 		fill(255 * i / spectrum.size());
 		translate(0, 0, 1);
 		for(int j = 0; j < maxFreq; j++) {
-			rect(j * width / maxFreq, height - 10, (j + 1) * width / maxFreq - j * width / maxFreq, -spectrum.get(i)[j]); // Draw bar
+			rect(j * width / maxFreq, height - 10, ceil((float) width / maxFreq), -spectrum.get(i)[j]); // Draw bar
 		}
 	}
 
