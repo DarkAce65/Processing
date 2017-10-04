@@ -9,7 +9,7 @@ FFT fft;
 boolean draw3D = false;
 int z = 0;
 int depth = 5;
-int longestTrace = 100;
+int traceLength = 100;
 int avgSize = 0;
 ArrayList<float[]> spectrum; // Bar data
 
@@ -49,7 +49,7 @@ void draw() {
 
 	background(0);
 	spectrum.add(new float[avgSize]);
-	if(spectrum.size() >= longestTrace) {
+	if(spectrum.size() >= traceLength) {
 		spectrum.remove(0);
 	}
 	for(int i = 0; i < avgSize; i++) {
