@@ -7,6 +7,7 @@ AudioInput ain;
 FFT fft;
 BeatDetect beat;
 
+boolean draw3D = false;
 int z = 0;
 int depth = 5;
 int longestTrace = 100;
@@ -24,6 +25,7 @@ void setup() {
 	ain = minim.getLineIn(Minim.MONO, sampleSize); // Get microphone input
 
 	fft = new FFT(ain.bufferSize(), ain.sampleRate()); // Create new FFT from audio input
+	fft.linAverages(200);
 	beat = new BeatDetect(); // Create BeatDetect object
 
 	maxFreq = fft.freqToIndex(20000); // Set maxFreq to the index of 20000 Hz
@@ -35,6 +37,14 @@ float traceFill(float i) {
 	return 0.35 * exp(6.6 * i) + 1.18;
 }
 
+void draw3DRect(float x, float y, float width, float height) {
+	x = x + width / 2;
+	y = y + height / 2;
+	translate(x, y, -depth / 2);
+	box(width, height, depth);
+	translate(-x, -y, depth / 2);
+}
+
 void draw() {
 	fft.forward(ain.mix); // Run FFT on input
 	beat.detect(ain.mix); // Run BeatDetect on input
@@ -44,12 +54,12 @@ void draw() {
 	translate(0, 0, -100);
 
 	background(0);
-	spectrum.add(new float[maxFreq]);
+	spectrum.add(new float[fft.avgSize()]);
 	if(spectrum.size() >= longestTrace) {
 		spectrum.remove(0);
 	}
-	for(int i = 0; i < maxFreq; i++) {
-		float amplitude = fft.getBand(i) * height / 100;
+	for(int i = 0; i < fft.avgSize(); i++) {
+		float amplitude = fft.getAvg(i) * height / 100;
 		float smoothing = spectrum.get(spectrum.size() - 1)[i] < amplitude ? attack : decay; // Pick lerp constant based on change of value
 		spectrum.get(spectrum.size() - 1)[i] = lerp(spectrum.get(spectrum.size() - 2)[i], amplitude, smoothing); // Smooth current bar value
 	}
@@ -59,8 +69,13 @@ void draw() {
 	for(int i = 0; i < spectrum.size(); i++) {
 		fill(traceFill((float) i / spectrum.size()));
 		translate(0, 0, depth);
-		for(int j = 0; j < maxFreq; j++) {
-			rect(j * width / maxFreq, height, ceil((float) width / maxFreq), -spectrum.get(i)[j]); // Draw bar
+		for(int j = 0; j < fft.avgSize(); j++) {
+			if(draw3D) {
+				draw3DRect(j * width / fft.avgSize(), height, ceil((float) width / fft.avgSize()), min(-5, -spectrum.get(i)[j]));
+			}
+			else {
+				rect(j * width / fft.avgSize(), height, ceil((float) width / fft.avgSize()), min(-5, -spectrum.get(i)[j]));
+			}
 		}
 	}
 
