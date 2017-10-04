@@ -11,7 +11,7 @@ boolean draw3D = false;
 int z = 0;
 int depth = 5;
 int longestTrace = 100;
-int maxFreq = sampleSize; // Index of highest frequency for bars
+int avgSize = 0;
 float attack = 0.7; // Attack value for bar lerp
 float decay = 0.1; // Decay value for bar lerp
 ArrayList<float[]> spectrum; // Bar data
@@ -28,9 +28,9 @@ void setup() {
 	fft.linAverages(200);
 	beat = new BeatDetect(); // Create BeatDetect object
 
-	maxFreq = fft.freqToIndex(20000); // Set maxFreq to the index of 20000 Hz
+	avgSize = fft.avgSize();
 	spectrum = new ArrayList<float[]>();
-	spectrum.add(new float[maxFreq]);
+	spectrum.add(new float[avgSize]);
 }
 
 float traceFill(float i) {
@@ -54,11 +54,11 @@ void draw() {
 	translate(0, 0, -100);
 
 	background(0);
-	spectrum.add(new float[fft.avgSize()]);
+	spectrum.add(new float[avgSize]);
 	if(spectrum.size() >= longestTrace) {
 		spectrum.remove(0);
 	}
-	for(int i = 0; i < fft.avgSize(); i++) {
+	for(int i = 0; i < avgSize; i++) {
 		float amplitude = fft.getAvg(i) * height / 100;
 		float smoothing = spectrum.get(spectrum.size() - 1)[i] < amplitude ? attack : decay; // Pick lerp constant based on change of value
 		spectrum.get(spectrum.size() - 1)[i] = lerp(spectrum.get(spectrum.size() - 2)[i], amplitude, smoothing); // Smooth current bar value
@@ -69,12 +69,12 @@ void draw() {
 	for(int i = 0; i < spectrum.size(); i++) {
 		fill(traceFill((float) i / spectrum.size()));
 		translate(0, 0, depth);
-		for(int j = 0; j < fft.avgSize(); j++) {
+		for(int j = 0; j < avgSize; j++) {
 			if(draw3D) {
-				draw3DRect(j * width / fft.avgSize(), height, ceil((float) width / fft.avgSize()), min(-5, -spectrum.get(i)[j]));
+				draw3DRect(j * width / avgSize, height, ceil((float) width / avgSize), min(-5, -spectrum.get(i)[j]));
 			}
 			else {
-				rect(j * width / fft.avgSize(), height, ceil((float) width / fft.avgSize()), min(-5, -spectrum.get(i)[j]));
+				rect(j * width / avgSize, height, ceil((float) width / avgSize), min(-5, -spectrum.get(i)[j]));
 			}
 		}
 	}
