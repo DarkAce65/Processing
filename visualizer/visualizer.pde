@@ -12,8 +12,6 @@ int z = 0;
 int depth = 5;
 int longestTrace = 100;
 int avgSize = 0;
-float attack = 0.7; // Attack value for bar lerp
-float decay = 0.1; // Decay value for bar lerp
 ArrayList<float[]> spectrum; // Bar data
 
 void setup() {
@@ -60,8 +58,7 @@ void draw() {
 	}
 	for(int i = 0; i < avgSize; i++) {
 		float amplitude = fft.getAvg(i) * height / 100;
-		float smoothing = spectrum.get(spectrum.size() - 1)[i] < amplitude ? attack : decay; // Pick lerp constant based on change of value
-		spectrum.get(spectrum.size() - 1)[i] = lerp(spectrum.get(spectrum.size() - 2)[i], amplitude, smoothing); // Smooth current bar value
+		spectrum.get(spectrum.size() - 1)[i] = lerp(spectrum.get(spectrum.size() - 2)[i], amplitude, 0.65);
 	}
 
 	noStroke();
