@@ -5,7 +5,6 @@ int sampleSize = 1024;
 Minim minim;
 AudioInput ain;
 FFT fft;
-BeatDetect beat;
 
 boolean draw3D = false;
 int z = 0;
@@ -17,14 +16,12 @@ ArrayList<float[]> spectrum; // Bar data
 void setup() {
 	size(1600, 800, P3D);
 	background(0);
-	strokeWeight(2); // Thicken lines
 
 	minim = new Minim(this); // Set up new Minim object
 	ain = minim.getLineIn(Minim.MONO, sampleSize); // Get microphone input
 
 	fft = new FFT(ain.bufferSize(), ain.sampleRate()); // Create new FFT from audio input
 	fft.linAverages(200);
-	beat = new BeatDetect(); // Create BeatDetect object
 
 	avgSize = fft.avgSize();
 	spectrum = new ArrayList<float[]>();
@@ -35,7 +32,7 @@ float traceFill(float i) {
 	return 0.35 * exp(6.6 * i) + 1.18;
 }
 
-void draw3DRect(float x, float y, float width, float height) {
+void draw3DRect(float x, float y, float width, float height) { // Draw box like rect with depth
 	x = x + width / 2;
 	y = y + height / 2;
 	translate(x, y, -depth / 2);
@@ -45,7 +42,6 @@ void draw3DRect(float x, float y, float width, float height) {
 
 void draw() {
 	fft.forward(ain.mix); // Run FFT on input
-	beat.detect(ain.mix); // Run BeatDetect on input
 	
 	lights();
 	camera(-mouseX + width, -mouseY + height, (height / 2) / tan(PI / 6), width / 2, height / 2, 0, 0, 1, 0);
@@ -75,10 +71,6 @@ void draw() {
 			}
 		}
 	}
-
-	stroke(255);
-	noFill();
-	rect(0, 0, width, height);
 
 	z++;
 }
