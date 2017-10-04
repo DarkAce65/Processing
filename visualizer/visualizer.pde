@@ -8,6 +8,7 @@ FFT fft;
 BeatDetect beat;
 
 int z = 0;
+int depth = 5;
 int longestTrace = 100;
 int maxFreq = sampleSize; // Index of highest frequency for bars
 float attack = 0.7; // Attack value for bar lerp
@@ -28,7 +29,10 @@ void setup() {
 	maxFreq = fft.freqToIndex(20000); // Set maxFreq to the index of 20000 Hz
 	spectrum = new ArrayList<float[]>();
 	spectrum.add(new float[maxFreq]);
-	// spectrum = new float[maxFreq][maxFreq]; // Create array of spectrum data
+}
+
+float traceFill(float i) {
+	return 0.35 * exp(6.6 * i) + 1.18;
 }
 
 void draw() {
@@ -51,12 +55,12 @@ void draw() {
 	}
 
 	noStroke();
-	translate(0, 0, -spectrum.size());
+	translate(0, 0, -spectrum.size() * depth);
 	for(int i = 0; i < spectrum.size(); i++) {
-		fill(255 * i / spectrum.size());
-		translate(0, 0, 1);
+		fill(traceFill((float) i / spectrum.size()));
+		translate(0, 0, depth);
 		for(int j = 0; j < maxFreq; j++) {
-			rect(j * width / maxFreq, height - 10, ceil((float) width / maxFreq), -spectrum.get(i)[j]); // Draw bar
+			rect(j * width / maxFreq, height, ceil((float) width / maxFreq), -spectrum.get(i)[j]); // Draw bar
 		}
 	}
 
